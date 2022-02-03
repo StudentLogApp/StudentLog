@@ -1,10 +1,10 @@
 {
-  "name": "proyectodaw",
+  "name": "studentlog",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "serve": "nodemon index.js"
+    "serve": "nodemon app.js"
   },
   "keywords": [],
   "author": "",

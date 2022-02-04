@@ -7,17 +7,17 @@ d.getElementById("entrar").addEventListener("click", (ev) => {
   var correo = d.getElementById("correoLogin");
   var contra = d.getElementById("contrasenyaLogin");
   //iniciarSesion(correo, contra);
+  window.location.href = "./home.html";
 });
 /*Ir a registro*/
 d.getElementById("irRegistro").addEventListener("click", (ev) => {
   ev.preventDefault();
-  d.getElementById("formLogin").classList.add("logueado");
-  d.getElementById("formRegistro").classList.add("aparecer");
+  window.location.href = "./registro.html";
 });
 /*Volver*/
 d.getElementById("volver").addEventListener("click", (ev) => {
   ev.preventDefault();
-  window.location.reload();
+  window.location.href = "./index.html";
 });
 /*Registrarse*/
 d.getElementById("registrarse").addEventListener("click", (ev) => {
@@ -30,6 +30,4 @@ d.getElementById("registrarse").addEventListener("click", (ev) => {
   };
   //crearUsuario(datos);
   console.log(datos);
-  d.getElementById("formRegistro").classList.remove("aparecer");
-  d.getElementById("formLogin").classList.remove("logueado");
 });

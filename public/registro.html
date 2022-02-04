@@ -11,40 +11,53 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="./css/estilos.css" />
-    <link rel="stylesheet" href="./css/login.css" />
+    <link rel="stylesheet" href="./css/registro.css" />
     <title>StudentLog</title>
   </head>
   <body>
-    <div id="formLogin" class="login">
+    <div id="formRegistro" class="registro">
       <form class="row g-3 needs-validation">
-        <h1>LOGIN</h1>
+        <h1>REGISTRO</h1>
         <div class="inputs">
           <div class="col-md-4">
             <label class="form-label">Correo</label>
             <input
               class="form-control"
               type="email"
-              id="correoLogin"
+              id="correo"
               placeholder="StudentLog@gmail.com"
             />
           </div>
           <div class="col-md-4">
             <label class="form-label">Contraseña</label>
-            <input class="form-control" type="password" id="contrasenyaLogin" />
+            <input class="form-control" type="password" id="contrasenya" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Nombre</label>
+            <input class="form-control" type="text" id="nombre" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Rol</label>
+            <select name="select" class="form-select">
+              <option value="elegir">Elegir</option>
+              <option value="estudiante">Estudiante</option>
+              <option value="profesor">Profesor</option>
+            </select>
           </div>
         </div>
+
         <div class="botones">
-          <input
-            class="btn btn-primary"
-            type="submit"
-            id="entrar"
-            value="Entrar"
-          />
           <input
             class="btn btn-info"
             type="submit"
-            id="irRegistro"
-            value="Ir a Registro"
+            id="volver"
+            value="Volver"
+          />
+          <input
+            class="btn btn-primary"
+            type="submit"
+            id="registrarse"
+            value="Registrarse"
           />
         </div>
       </form>

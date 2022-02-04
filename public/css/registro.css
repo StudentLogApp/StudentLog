@@ -21,7 +21,6 @@ body {
   margin: auto;
   max-width: 30rem;
   box-shadow: 10px 16px 40px -11px rgba(0, 0, 0, 0.473);
-  display: none;
 }
 .registro h1 {
   color: white;
@@ -39,18 +38,15 @@ body {
   justify-content: center;
 }
 
+.col-md-4 {
+  width: 70%;
+  margin: 1rem;
+}
+
 #volver,
 #registrarse {
   color: white;
   font-weight: bold;
   margin: 0.5rem;
   letter-spacing: 1px;
-}
-
-.logueado {
-  display: none;
-}
-
-.aparecer {
-  display: block;
 }

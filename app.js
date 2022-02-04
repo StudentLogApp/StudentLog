@@ -1,19 +1,13 @@
-const express = require('express');
-const { dirname } = require('path');
+import express from "express";
 const app = express();
-const path = require('path');
 
 //settings
-app.set('port', 8080);
+app.set("port", 8080);
+
+app.listen(app.get("port"), () => {
+  console.log(`Aplicación desplegada en el puerto ${app.get("port")}`);
+});
 
 //middlewares
-app.use(express.static(path.join(__dirname, 'public')));
-
-//routes
-app.get('/', (req, res) => {
-    res.send('Bienvenidos');
-})
-
-app.listen(app.get('port'), () => {
-    console.log(`Aplicación desplegada en el puerto ${app.get('port')}`);
-});
+app.use(express.static("./public"));
+app.use(express.urlencoded({ extended: true }));

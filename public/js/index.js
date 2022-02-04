@@ -1,13 +1,10 @@
 "use strict";
-var d = document;
+import { crearUsuario, iniciarSesion } from '../../src/js/funcionesAutentificacion.js';
 
+var d = document;
 /*Entrar*/
 d.getElementById("entrar").addEventListener("click", (ev) => {
   ev.preventDefault();
-  var correo = d.getElementById("correoLogin");
-  var contra = d.getElementById("contrasenyaLogin");
-  //iniciarSesion(correo, contra);
-  window.location.href = "./home.html";
 });
 /*Ir a registro*/
 d.getElementById("irRegistro").addEventListener("click", (ev) => {
@@ -23,11 +20,9 @@ d.getElementById("volver").addEventListener("click", (ev) => {
 d.getElementById("registrarse").addEventListener("click", (ev) => {
   ev.preventDefault();
   var datos = {
-    correo: d.getElementById("correo"),
-    nombre: d.getElementById("nombre"),
-    contra: d.getElementById("contrasenya"),
-    rol: d.getElementById("rol"),
+    correo: d.getElementById("correo").value,
+    nombre: d.getElementById("nombre").value,
+    contra: d.getElementById("contrasenya").value,
+    rol: d.getElementById("select").value,
   };
-  //crearUsuario(datos);
-  console.log(datos);
 });

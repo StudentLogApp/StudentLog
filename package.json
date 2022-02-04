@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "serve": "nodemon app.js"
   },
@@ -10,7 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "firebase": "^9.6.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

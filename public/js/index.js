@@ -5,20 +5,16 @@ var d = document;
 /*Entrar*/
 d.getElementById("entrar").addEventListener("click", (ev) => {
   ev.preventDefault();
-  var correo = d.getElementById("correoLogin").value;
-  var contra = d.getElementById("contrasenyaLogin").value;
-  iniciarSesion(correo, contra);
 });
 /*Ir a registro*/
 d.getElementById("irRegistro").addEventListener("click", (ev) => {
   ev.preventDefault();
-  d.getElementById("formLogin").classList.add("logueado");
-  d.getElementById("formRegistro").classList.add("aparecer");
+  window.location.href = "./registro.html";
 });
 /*Volver*/
 d.getElementById("volver").addEventListener("click", (ev) => {
   ev.preventDefault();
-  window.location.reload();
+  window.location.href = "./index.html";
 });
 /*Registrarse*/
 d.getElementById("registrarse").addEventListener("click", (ev) => {
@@ -29,7 +25,4 @@ d.getElementById("registrarse").addEventListener("click", (ev) => {
     contra: d.getElementById("contrasenya").value,
     rol: d.getElementById("select").value,
   };
-  crearUsuario(datos);
-  d.getElementById("formRegistro").classList.remove("aparecer");
-  d.getElementById("formLogin").classList.remove("logueado");
 });

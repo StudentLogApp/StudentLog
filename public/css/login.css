@@ -50,11 +50,3 @@ body {
   margin: 0.5rem;
   letter-spacing: 1px;
 }
-
-.logueado {
-  display: none;
-}
-
-.aparecer {
-  display: block;
-}

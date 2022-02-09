@@ -10,7 +10,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
 //Importamos algunas funciónes de usuarios.
-import { guardarUsuario, encontrarUsuario } from "./funcionesUsuario.js";
+import { guardarUsuario } from "./funcionesUsuario.js";
+
+const d = document;
 
 export const crearUsuario = (datos) => {
   //Creamos el usuario en la autentificación con los datos requeridos.
@@ -35,10 +37,9 @@ export const crearUsuario = (datos) => {
 export const iniciarSesion = (usuario, contra) => {
   //Iniciamos sesión con los datos que tiene guardados la autentificación.
   signInWithEmailAndPassword(autentificacion, usuario, contra)
-    .then((credenciales) => {
-      console.log(credenciales.user);
-      //Buscaremos el usuario para saber que rol tiene.
-      encontrarUsuario(credenciales.user.uid);
+    .then((credenciales) => { 
+      //Pasamos la id al home por url para cargar los datos del usuario.
+      window.location.href = './home.html?id=' + credenciales.user.uid;
     })
     //En el caso de que no exista el usuario, se realizarán estas acciones.
     .catch((error) => {

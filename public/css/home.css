@@ -5,3 +5,191 @@ body {
 nav {
   background-color: #546dfd;
 }
+
+#navbarSupportedContent {
+  text-align: center;
+}
+
+.cardPrincipal {
+  margin: 1rem;
+  -webkit-box-shadow: 10px 10px 18px 5px rgba(0, 0, 0, 0.082);
+  -moz-box-shadow: 10px 10px 18px 5px rgba(0, 0, 0, 0.082);
+  box-shadow: 10px 10px 18px 5px rgba(0, 0, 0, 0.082);
+  border-radius: 5px;
+}
+
+nav + .bg-primary {
+  background: url(../assets/img/StudentLogFondo.png) no-repeat center center
+    fixed;
+  background-size: cover;
+  background-size: 100% 100%;
+}
+
+.headCard {
+  background: linear-gradient(
+    90deg,
+    rgba(58, 169, 180, 1) 0%,
+    rgba(171, 186, 255, 1) 100%
+  );
+  display: flex;
+  border-radius: 5px 5px 0 0;
+  height: 5rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.card-title {
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#botonMatriculaCurso {
+  margin-bottom: 1rem;
+}
+
+#botonMatriculaAsignatura {
+  margin-bottom: 1rem;
+}
+
+svg {
+  color: white;
+  margin: 0.5rem;
+}
+
+.form-select,
+.form-control,
+.col-md-4 > label,
+.col-md-3 > label {
+  width: 225px;
+}
+
+form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+form div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.multiselect {
+  width: 225px;
+  position: relative;
+  cursor: pointer;
+}
+
+.selectBox {
+  position: relative;
+}
+
+.selectBox select {
+  width: 100%;
+}
+
+.overSelect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#checkboxes input, #checkboxesAlumno input, #checkboxesAlumno2 input, #checkboxesAsignatura input {
+  margin-right: 1rem;
+}
+
+#checkboxes, #checkboxesAlumno, #checkboxesAlumno2, #checkboxesAsignatura {
+  display: block;
+  border: 1px #dadada solid;
+  position: relative;
+  min-width: 100%;
+  white-space: nowrap;
+  background-color: white;
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 110px;
+}
+
+#checkboxes.hide, #checkboxesAlumno.hide, #checkboxesAlumno2.hide, #checkboxesAsignatura.hide {
+  display: none;
+}
+
+#checkboxes label, #checkboxesAlumno label, #checkboxesAlumno2 label, #checkboxesAsignatura label {
+  display: block;
+}
+
+#checkboxes label:hover, #checkboxesAlumno label:hover, #checkboxesAlumno2 label:hover, #checkboxesAsignatura label:hover {
+  background-color: #1e90ff;
+}
+
+.grid {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.cardPrincipal {
+  margin: 5rem;
+  margin-top: 7rem;
+}
+
+/*Medium devices (tablets, 768px and up)*/
+@media (min-width: 200px) {
+  .grid {
+    display: grid;
+    width: 100%;
+    grid-template-areas:
+      "card"
+      "card"
+      "card"
+      "card";
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+  }
+  .cardPrincipal {
+    margin-top: 3rem;
+  }
+}
+
+/*X-Large devices (large desktops, 1200px and up)*/
+@media (min-width: 800px) {
+  .grid {
+    display: grid;
+    width: 100%;
+    grid-template-areas:
+      "card card"
+      "card  card";
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+  .cardPrincipal {
+    margin-top: 3rem;
+  }
+}
+
+/*XX-Large devices (larger desktops, 1400px and up)*/
+@media (min-width: 1600px) {
+  .grid {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .cardPrincipal {
+    margin: 5rem;
+    margin-top: 7rem;
+  }
+}

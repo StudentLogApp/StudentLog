@@ -12,6 +12,10 @@ import {
   where,
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+import { guardarAlumno, cargarAlumno } from "./funcionesAlumno.js";
+
+import { guardarProfesor, cargarProfesor, cargarDatosFormulario } from "./funcionesProfesor.js";
+
 const d = document;
 
 //Conexión a la base de datos.
@@ -24,6 +28,16 @@ const usuariosColeccion = collection(db, "usuarios");
 export const guardarUsuario = async (usuario) => {
   const usuarioGuardado = await addDoc(usuariosColeccion, usuario);
   console.log(`Usuario creado correctamente con id ${usuarioGuardado.id}. Inicia sesión para comenzar.`);
+
+  if (usuario.rol == "profesor") {
+    console.log("creando profesor");
+    guardarProfesor(usuario);
+  }else{
+    console.log("creando alumno");
+    guardarAlumno(usuario);
+  }
+
+  window.location.href = "./index.html";
 };
 
 //Función que utilizaremos para encontrar el usuario.
@@ -35,14 +49,17 @@ export const encontrarUsuario = async (id) => {
     const usuario = documento.data();
     console.log(`Sesión iniciado correctamente. Bienvenido ${usuario.nombre}.`);
 
-    //Creamos las opciones de las listas, formularios y eventos.
-    //crearListas(usuario);
+    console.log(usuario);
 
-    //Inicializamos la carga de las listas del usuario.
-    //obtenerListas(usuario);
-
-    //Inicializamos la carga de productos, según el rol.
-    //obtenerProductos(usuario);
+    if (usuario.rol == "profesor") {
+      console.log("cargando profesor");
+      cargarProfesor(id);
+      cargarDatosFormulario(id);
+    }else{
+      console.log("cargando alumno");
+      cargarAlumno(id);
+    }
+    
     return usuario;
   });
 };

@@ -5,15 +5,15 @@ import { app } from "./datosFirebase.js";
 
 //Importamos algunas funciones de firebase.
 import {
-    getFirestore,
-    collection,
-    getDocs,
-    addDoc,
-    query,
-    where,
-  } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  query,
+  where,
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-import { plantillaPerfil } from "./funcionesPlantillas.js";
+import { plantillaNavCursoAlumno, plantillaPerfil } from "./funcionesPlantillas.js";
 
 const d = document;
 
@@ -23,31 +23,30 @@ const db = getFirestore(app);
 //Colección de las listas de FireBase.
 const alumnosColeccion = collection(db, "alumnos");
 
-export const guardarAlumno = async(usuario) => {
-    usuario.asignaturas = [];
-    usuario.curso = "";
-    usuario.imagen = "";
-    const alumnoGuardado = await addDoc(alumnosColeccion, usuario);
-}
+//Función que nos permitirá guardar el usuario recibido, con algunas propiedades añadidas, a alumnos.
+export const guardarAlumno = async (usuario) => {
+  console.log("guardando alumno");
+  usuario.asignaturas = [];
+  usuario.curso = "";
+  usuario.imagen = "";
+  const alumnoGuardado = await addDoc(alumnosColeccion, usuario);
+};
 
-export const cargarAlumno = async(id) => {
+//Función que utilizaremos para cargar las plantillas que verá el alumno.
+export const cargarAlumno = async (id) => {
+  console.log("cargando alumno");
   //Filtraremos el alumno que tenga la id de autentificación.
   const consulta = query(alumnosColeccion, where("id", "==", id));
   const alumnoFiltrado = await getDocs(consulta);
   alumnoFiltrado.docs.map((documento) => {
     const alumno = documento.data();
     crearPlantillasAlumno(alumno);
-  })
-}
+  });
+};
 
-export const mostrarAlumnos = async() => {
-  const alumnos = await getDocs(alumnosColeccion);
-  alumnos.forEach((doc) => {
-    //console.log(doc.data());
-  })
-}
-
+//Función que usaremos para añadir la plantilla a la página.
 const crearPlantillasAlumno = (alumno) => {
   const divPerfil = plantillaPerfil(alumno);
   d.getElementById("plantillas").appendChild(divPerfil);
-}
+  plantillaNavCursoAlumno().then(nodo => d.getElementById("navHome").appendChild(nodo));
+};

@@ -66,6 +66,10 @@ form {
   margin-right: auto;
 }
 
+button{
+  margin: 0.5rem;
+}
+
 #formularioEditar{
   display: none;
   margin-top: 4em;
@@ -79,4 +83,12 @@ a{
 
 a:hover{
   color: white;
+}
+
+.desaparecer{
+  display: none;
+}
+
+.aparecer{
+  display: block;
 }

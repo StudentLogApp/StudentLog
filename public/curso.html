@@ -67,7 +67,29 @@
         </div>
       </div>
     </nav>
-    <div class="grid" id="mostrarCurso">
+    <div class="grid" id="mostrarCurso"><div id="contenedorAlerta"></div></div>
+    <br><br>
+    <div id="editarFormulario" class="desaparecer">
+      <form>
+        <div class="mb-3">
+          <label for="nombreAlumnoCurso" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombreAlumnoCurso" />
+        </div>
+        <div class="mb-3">
+          <label for="primerApellido" class="form-label">Primer apellido</label>
+          <input type="text" class="form-control" id="primerApellido" />
+        </div>
+        <div class="mb-3">
+          <label for="segundoApellido" class="form-label">Segundo apellido</label>
+          <input type="text" class="form-control" id="segundoApellido" />
+        </div>
+        <div class="mb-3">
+          <label for="correoAlumnoCurso" class="form-label">Correo</label>
+          <input type="email" class="form-control" id="correoAlumnoCurso" />
+        </div>
+        <button class="btn btn-primary" id="actualizarEditar"><a href="#mostrarCurso">Actualizar</a></button>
+      </form>
+      ;
     </div>
 
     <script type="module" src="./js/curso.js"></script>

@@ -23,7 +23,7 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="./css/estilos.css" />
-    <link rel="stylesheet" href="./css/home.css" />
+    <link rel="stylesheet" href="./css/curso.css" />
     <title>StudentLog</title>
   </head>
   <body>
@@ -53,7 +53,9 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="navHome">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link active" aria-current="page" href="#" id="home"
+                >Home</a
+              >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#" id="perfil">Perfil</a>
@@ -65,32 +67,10 @@
         </div>
       </div>
     </nav>
-    <div class="bg-primary">
-      <div class="container">
-        <div class="align-items-center g-0 row">
-          <div class="col-xl-5 col-lg-6 col-md-12">
-            <div class="py-5 py-lg-0">
-              <h1 class="text-white mb-4 fw-bold">Bienvenido a StudentLog</h1>
-              <p class="text-white mb-4 lead">
-                <strong>La plataforma ideal para la enseñanza.</strong>
-                <br />
-                Aquí encontrarás todas las herramientas que necesitas para poder
-                administrar tus cursos y asignaturas.
-              </p>
-            </div>
-          </div>
-          <div class="text-lg-end text-center col-xl-7 col-lg-6 col-md-12">
-            <img
-              class="img-fluid"
-              src="assets/img/StudentLogSinFondo.png"
-              alt=""
-            />
-          </div>
-        </div>
-      </div>
+    <div class="grid" id="mostrarCurso">
     </div>
-    <div class="grid" id="plantillas"></div>
-    <script type="module" src="./js/home.js"></script>
+
+    <script type="module" src="./js/curso.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="

@@ -26,6 +26,7 @@ const alumnosColeccion = collection(db, "alumnos");
 export const guardarAlumno = async(usuario) => {
     usuario.asignaturas = [];
     usuario.curso = "";
+    usuario.imagen = "";
     const alumnoGuardado = await addDoc(alumnosColeccion, usuario);
 }
 

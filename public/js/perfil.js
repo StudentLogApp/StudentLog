@@ -7,9 +7,10 @@ window.onload = () => {
 
   //Obtenemos la id recibida en la url mediante estos pasos.
   let params = new URLSearchParams(location.search);
-  //Buscaremos el usuario para saber que rol tiene.
+  //Cargaremos el usuario para saber sus datos y pintar el perfil.
   cargarUsuario(params.get("id"));
 
+  //Agregamos un evento al enlace para cerrar la sesión.
   d.getElementById("cerrarSesion").addEventListener(
     "click",
     () => {
@@ -18,6 +19,7 @@ window.onload = () => {
     false
   );
 
+  //Agregamos un evento al enlace para volver a la página principal.
   d.getElementById("home").addEventListener(
     "click",
     () => {

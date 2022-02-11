@@ -4,11 +4,13 @@ import { crearUsuario } from "../../src/js/funcionesAutentificacion.js";
 var d = document;
 
 window.onload = () => {
+  //Agregamos un evento al botón que nos redirigirá al login.
   /Volver/;
   d.getElementById("volver").addEventListener("click", (ev) => {
     ev.preventDefault();
     window.location.href = "./index.html";
   });
+  //Agregamos un evento al botón para registrarnos.
   /Registrarse/;
   d.getElementById("registrarse").addEventListener("click", (ev) => {
     ev.preventDefault();

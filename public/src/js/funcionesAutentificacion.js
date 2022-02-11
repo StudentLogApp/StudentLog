@@ -6,14 +6,16 @@ import { autentificacion } from "./datosFirebase.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
 //Importamos algunas funciónes de usuarios.
 import { guardarUsuario } from "./funcionesUsuario.js";
 
+import { alert } from "./funcionesPlantillas.js";
+
 const d = document;
 
+//Función que usaremos para crear un usuario.
 export const crearUsuario = (datos) => {
   //Creamos el usuario en la autentificación con los datos requeridos.
   createUserWithEmailAndPassword(autentificacion, datos.correo, datos.contra)
@@ -27,26 +29,40 @@ export const crearUsuario = (datos) => {
     .catch((error) => {
       console.log(error);
       if (error.message == "Firebase: Error (auth/invalid-email).") {
-        console.log("Introduce un correo de usuario.")
-      } else {
-        console.log("Introduce un contraseña de usuario.")
-      }
+        //Mostramos un aviso del error de la acción al intentar registrarse.
+       alert(
+         "Error, has introducido un correo repetido",
+         "danger"
+       );
+       } else {
+         //Mostramos un aviso del error de la acción al intentar registrarse.
+       alert(
+         "Error, has introducido una contraseña invalida",
+         "danger"
+       );
+       }
     });
 };
 
+//Función que usaremos para iniciar sesión en la página.
 export const iniciarSesion = (usuario, contra) => {
   //Iniciamos sesión con los datos que tiene guardados la autentificación.
   signInWithEmailAndPassword(autentificacion, usuario, contra)
-    .then((credenciales) => { 
+    .then((credenciales) => {
       //Pasamos la id al home por url para cargar los datos del usuario.
       window.location.href = './home.html?id=' + credenciales.user.uid;
     })
-    //En el caso de que no exista el usuario, se realizarán estas acciones.
+    //En el caso de que no exista el usuario, no iniciará sesión.
     .catch((error) => {
+      alert(
+        "Error, no has introducido datos válidos.",
+        "danger"
+      );
       console.log("No se ha iniciado sesión");
     });
 };
 
+//Función que usaremos para cerrar sesión.
 export const cerrarSesion = () => {
   autentificacion
     .signOut()

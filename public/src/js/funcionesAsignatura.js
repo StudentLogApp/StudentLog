@@ -7,10 +7,7 @@ import { app } from "./datosFirebase.js";
 import {
   getFirestore,
   collection,
-  getDocs,
   addDoc,
-  query,
-  where,
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 const d = document;
@@ -21,6 +18,8 @@ const db = getFirestore(app);
 //Colección de las listas de FireBase.
 const asignaturasColeccion = collection(db, "asignaturas");
 
-export const guardarCurso = async (asignatura) => {
+//Función que nos permitirá guardar la asignaturas en firestore.
+export const guardarAsignatura = async (asignatura) => {
+  console.log("guardando asignatura");
   const asignaturaGuardada = await addDoc(asignaturasColeccion, asignatura);
 };

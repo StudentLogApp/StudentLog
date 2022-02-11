@@ -1,7 +1,7 @@
 "use strict";
-
 //Importamos los datos de conexión de firebase.
 import { app } from "./datosFirebase.js";
+
 //Importamos algunas funciones de firebase.
 import {
   getFirestore,
@@ -14,13 +14,20 @@ import {
   doc,
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+//Importamos algunas funciones de profesor.
 import { showCheckboxes } from "./funcionesProfesor.js";
+
+import { actualizarUsuario } from "./funcionesUsuario.js";
 
 //Conexión a la base de datos.
 const db = getFirestore(app);
 
 const d = document;
 
+//Obtenemos la id recibida en la url mediante estos pasos.
+let params = new URLSearchParams(location.search);
+
+//Creación de plantilla para el formulario de inserción de cursos.
 export const plantillaCrearCurso = () => {
   const divCurso = d.createElement("div");
   divCurso.classList.add("cardPrincipal");
@@ -96,6 +103,7 @@ export const plantillaCrearCurso = () => {
   return divCurso;
 };
 
+//Creación de plantilla para el formulario de inserción de asignaturas.
 export const plantillaCrearAsignatura = () => {
   const divAsignatura = d.createElement("div");
   divAsignatura.classList.add("cardPrincipal");
@@ -182,6 +190,7 @@ export const plantillaCrearAsignatura = () => {
   return divAsignatura;
 };
 
+//Creación de plantilla para el formulario de matriculación de alumnos.
 export const plantillaMatricularAlumno = () => {
   const divAlumno = d.createElement("div");
   divAlumno.classList.add("cardPrincipal");
@@ -286,6 +295,7 @@ export const plantillaMatricularAlumno = () => {
   return divAlumno;
 };
 
+//Creación de plantilla para mostrar el perfil del usuario en el home.
 export const plantillaPerfil = (usuario) => {
   const divPerfil = d.createElement("div");
   divPerfil.classList.add("cardPrincipal");
@@ -315,6 +325,7 @@ export const plantillaPerfil = (usuario) => {
   return divPerfil;
 };
 
+//Creación de plantilla para el nav de cursos de la página.
 export const plantillaNavCurso = (profesor) => {
   const navCurso = d.createElement("li");
   navCurso.classList.add("nav-item", "dropdown");
@@ -351,6 +362,49 @@ export const plantillaNavCurso = (profesor) => {
   return navCurso;
 };
 
+export const plantillaNavCursoAlumno = async () => {
+  const navCurso = d.createElement("li");
+  navCurso.classList.add("nav-item", "dropdown");
+  navCurso.innerHTML = `<a
+  class="nav-link dropdown-toggle"
+  href="#"
+  id="cursos"
+  role="button"
+  data-bs-toggle="dropdown"
+  aria-expanded="false"
+>
+  Cursos
+</a>`;
+
+  const listaCurso = d.createElement("ul");
+  listaCurso.classList.add("dropdown-menu");
+  listaCurso.ariaLabel = "cursos";
+
+  const cursos = await getDocs(collection(db, "cursos"));
+  cursos.docs.map((documento) => {
+    const dato = documento.data();
+
+    const curso = d.createElement("li");
+    curso.innerHTML = `<a class="dropdown-item" href="#">${dato.nombre}</a>`;
+    curso.addEventListener(
+      "click",
+      (ev) => {
+        location.href =
+          "./curso.html?id=" +
+          params.get("id").split("?")[0] +
+          "?curso=" +
+          ev.target.textContent;
+      },
+      false
+    );
+    listaCurso.appendChild(curso);
+  });
+
+  navCurso.appendChild(listaCurso);
+  return navCurso;
+};
+
+//Creación de plantillas que nos servirá para crear los elementos de forma dinámica y cargar los datos que requeriremos.
 export const crearFormulariosDinamico = async (profesor) => {
   //Cargados cursos para la creación de la asignatura.
   const selectCurso = plantillaSelect("asignaturaCurso");
@@ -361,7 +415,7 @@ export const crearFormulariosDinamico = async (profesor) => {
   //Cargados cursos para la matriculación de alumnos en asignatura.
   const selectCurso3 = plantillaSelect("matriculaCurso");
 
-  //He repetido tres veces este bucle, porque al parecer da conflicto si incluyo el curso en los tres select a la vez.
+  //He repetido tres veces este bucle, porque al parecer da conflicto si incluyo el appendchild para el curso en los tres select a la vez.
   profesor.curso.forEach((element) => {
     const curso = d.createElement("option");
     curso.innerHTML = `${element}`;
@@ -489,6 +543,7 @@ export const crearFormulariosDinamico = async (profesor) => {
   d.getElementById("cargarAlumnosMatricula").appendChild(selectAlumno);
   d.getElementById("cargarAlumnosMatricula2").appendChild(selectAlumno2);
 
+  //Cargadas asignaturas para la matriculación de alumnos en asignatura.
   const multiSelect4 = multiselectMatriculaAsignatura();
 
   const divCheckbox4 = d.createElement("div");
@@ -506,11 +561,12 @@ export const crearFormulariosDinamico = async (profesor) => {
 
       const inputCurso = d.getElementById("matriculaCursoAsignatura").value;
 
-      //Filtraremos el alumno que tenga la id de autentificación.
+      //Filtraremos el curso que seleccionemos en el select.
       const consulta = query(
         collection(db, "cursos"),
         where("nombre", "==", inputCurso)
       );
+      //Para el curso que seleccionamos, recorremos las asignaturas que tiene y las pintamos.
       const cursoSeleccionado = await getDocs(consulta);
       cursoSeleccionado.docs.map((documento) => {
         const curso = documento.data();
@@ -526,6 +582,7 @@ export const crearFormulariosDinamico = async (profesor) => {
 
       d.getElementById("cargarMatriculaAsignaturas").appendChild(multiSelect4);
 
+      //Agregamos el evento del multiselect para mostrar los input checkbox de las asignaturas.
       d.getElementById("eventoSelectAsignatura").addEventListener(
         "click",
         (ev) => {
@@ -537,6 +594,7 @@ export const crearFormulariosDinamico = async (profesor) => {
   );
 };
 
+//Creación de plantilla para hacer un elemento select.
 const plantillaSelect = (idNombre) => {
   const select = d.createElement("select");
   select.classList.add("form-select");
@@ -546,6 +604,7 @@ const plantillaSelect = (idNombre) => {
   return select;
 };
 
+//Creación de plantilla para hacer un multiselect.
 const multiselectAlumnoAsignatura = () => {
   const divMultiselect = d.createElement("div");
   divMultiselect.classList.add("multiselect");
@@ -563,6 +622,7 @@ const multiselectAlumnoAsignatura = () => {
   return divMultiselect;
 };
 
+//Creación de plantilla para hacer un multiselect.
 const multiselectAlumnoCurso = () => {
   const divMultiselect = d.createElement("div");
   divMultiselect.classList.add("multiselect");
@@ -580,6 +640,7 @@ const multiselectAlumnoCurso = () => {
   return divMultiselect;
 };
 
+//Creación de plantilla para hacer un multiselect.
 const multiselectAsignaturaCurso = () => {
   const divMultiselect = d.createElement("div");
   divMultiselect.classList.add("multiselect");
@@ -597,6 +658,7 @@ const multiselectAsignaturaCurso = () => {
   return divMultiselect;
 };
 
+//Creación de plantilla para hacer un multiselect.
 const multiselectMatriculaAsignatura = () => {
   const divMultiselect = d.createElement("div");
   divMultiselect.classList.add("multiselect");
@@ -615,6 +677,7 @@ const multiselectMatriculaAsignatura = () => {
   return divMultiselect;
 };
 
+//Creación de plantilla para hacer un multiselect.
 const multiselectCursoProfesor = () => {
   const divMultiselect = d.createElement("div");
   divMultiselect.classList.add("multiselect");
@@ -633,6 +696,7 @@ const multiselectCursoProfesor = () => {
   return divMultiselect;
 };
 
+//Creación de plantilla para añadir el título en la página de curso.
 export const plantillaTituloCurso = (nombre) => {
   const divTitulo = d.createElement("div");
   divTitulo.classList.add("two", "alt-two");
@@ -644,6 +708,7 @@ export const plantillaTituloCurso = (nombre) => {
   return divTitulo;
 };
 
+//Creación de plantilla para añadir un subtítulo a otros elementos en la página de curso.
 export const divElemento = (elemento) => {
   const div = d.createElement("div");
   div.classList.add("two", "alt-two");
@@ -651,6 +716,7 @@ export const divElemento = (elemento) => {
   return div;
 };
 
+//Creación de plantilla para las tablas(headers) de alumnos y profesores.
 export const plantillaTablaCurso = (elemento) => {
   const tabla = d.createElement("table");
   tabla.classList.add("table", "table-hover");
@@ -669,6 +735,25 @@ export const plantillaTablaCurso = (elemento) => {
   return tabla;
 };
 
+//Creación de plantilla para las tablas(headers) de alumnos y profesores sin herramientas.
+export const plantillaTablaCursoSinHerramientas = (elemento) => {
+  const tabla = d.createElement("table");
+  tabla.classList.add("table", "table-hover");
+  tabla.innerHTML = `<thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Nombre</th>
+    <th scope="col">Apellidos</th>
+    <th scope="col">Correo</th>
+    <th scope="col">Asignaturas</th>
+  </tr>
+</thead>
+<tbody id="${elemento}">
+</tbody>`;
+  return tabla;
+};
+
+//Creación de plantilla para las tabla(header) de asignaturas.
 export const plantillaTablaAsignaturasCurso = () => {
   const tabla = d.createElement("table");
   tabla.classList.add("table", "table-hover");
@@ -684,6 +769,7 @@ export const plantillaTablaAsignaturasCurso = () => {
   return tabla;
 };
 
+//Creación de plantilla para crear la tabla(body) de los alumnos.
 export const plantillaAlumnosCurso = (curso) => {
   //Numerado de filas dinámico.
   let num = 1;
@@ -698,12 +784,14 @@ export const plantillaAlumnosCurso = (curso) => {
     usuarioFiltrado.docs.map((documento) => {
       const usuario = documento.data();
       const tr = d.createElement("tr");
+      //Dividiremos el nombre completo del usuario para separa el nombre y los apellidos.
       tr.innerHTML = `<th scope="row">${num}</th>
       <td>${element.split(" ")[0]}</td>
       <td>${element.split(" ")[1] + " " + element.split(" ")[2]}</td>
       <td>${usuario.correo}</td>
       <td>${usuario.asignaturas}</td>`;
 
+      //Añadiremos los siguientes botones con sus respectivos eventos.
       const td = d.createElement("td");
       let buttonEditar = plantillaBotonEditar(usuario);
       let buttonEliminar = plantillaBotonEliminar(usuario);
@@ -716,11 +804,40 @@ export const plantillaAlumnosCurso = (curso) => {
   });
 };
 
+//Creación de plantilla para crear la tabla(body) de los alumnos sin botones.
+export const plantillaAlumnosCursoSinBotones = (curso) => {
+  //Numerado de filas dinámico.
+  let num = 1;
+  curso.alumnos.forEach(async (element) => {
+    //Filtraremos el alumno para obtener los correos y poder incluirlos en la web.
+    const consulta = query(
+      collection(db, "alumnos"),
+      where("nombre", "==", element)
+    );
+    const usuarioFiltrado = await getDocs(consulta);
+
+    usuarioFiltrado.docs.map((documento) => {
+      const usuario = documento.data();
+      const tr = d.createElement("tr");
+      //Dividiremos el nombre completo del usuario para separa el nombre y los apellidos.
+      tr.innerHTML = `<th scope="row">${num}</th>
+      <td>${element.split(" ")[0]}</td>
+      <td>${element.split(" ")[1] + " " + element.split(" ")[2]}</td>
+      <td>${usuario.correo}</td>
+      <td>${usuario.asignaturas}</td>`;
+
+      d.getElementById("mostrarAlumnos").appendChild(tr);
+      num++;
+    });
+  });
+};
+
+//Creación de plantilla para crear la tabla(body) de los profesores.
 export const plantillaProfesoresCurso = (curso) => {
   //Numerado de filas dinámico.
   let num = 1;
   curso.profesores.forEach(async (element) => {
-    //Filtraremos el alumno para obtener los correos y poder incluirlos en la web.
+    //Filtraremos el profesor para obtener los correos y poder incluirlos en la web.
     const consulta = query(
       collection(db, "profesores"),
       where("nombre", "==", element)
@@ -730,12 +847,14 @@ export const plantillaProfesoresCurso = (curso) => {
     usuarioFiltrado.docs.map((documento) => {
       const usuario = documento.data();
       const tr = d.createElement("tr");
+      //Dividiremos el nombre completo del usuario para separa el nombre y los apellidos.
       tr.innerHTML = `<th scope="row">${num}</th>
       <td>${element.split(" ")[0]}</td>
       <td>${element.split(" ")[1] + " " + element.split(" ")[2]}</td>
       <td>${usuario.correo}</td>
       <td>${usuario.asignaturas}</td>`;
 
+      //Añadiremos los siguientes botones con sus respectivos eventos.
       const td = d.createElement("td");
       let buttonEditar = plantillaBotonEditar(usuario);
       let buttonEliminar = plantillaBotonEliminar(usuario);
@@ -748,8 +867,35 @@ export const plantillaProfesoresCurso = (curso) => {
   });
 };
 
+//Creación de plantilla para crear la tabla(body) de los profesores sin botones.
+export const plantillaProfesoresCursoSinBotones = (curso) => {
+  //Numerado de filas dinámico.
+  let num = 1;
+  curso.profesores.forEach(async (element) => {
+    //Filtraremos el profesor para obtener los correos y poder incluirlos en la web.
+    const consulta = query(
+      collection(db, "profesores"),
+      where("nombre", "==", element)
+    );
+    const usuarioFiltrado = await getDocs(consulta);
+
+    usuarioFiltrado.docs.map((documento) => {
+      const usuario = documento.data();
+      const tr = d.createElement("tr");
+      //Dividiremos el nombre completo del usuario para separa el nombre y los apellidos.
+      tr.innerHTML = `<th scope="row">${num}</th>
+      <td>${element.split(" ")[0]}</td>
+      <td>${element.split(" ")[1] + " " + element.split(" ")[2]}</td>
+      <td>${usuario.correo}</td>
+      <td>${usuario.asignaturas}</td>`;
+      d.getElementById("mostrarProfesores").appendChild(tr);
+      num++;
+    });
+  });
+};
+
+//Creación de plantilla para crear la tabla(body) de las asignaturas.
 export const plantillaAsignaturasCurso = (curso) => {
-  console.log(curso);
   //Numerado de filas dinámico.
   let num = 1;
   curso.asignaturas.forEach(async (element) => {
@@ -772,6 +918,7 @@ export const plantillaAsignaturasCurso = (curso) => {
   });
 };
 
+//Creación de plantilla para crear el botón eliminar.
 const plantillaBotonEliminar = (usuario) => {
   //Obtenemos la id recibida en la url mediante estos pasos.
   let params = new URLSearchParams(location.search);
@@ -783,7 +930,6 @@ const plantillaBotonEliminar = (usuario) => {
     "click",
     async () => {
       console.log("eliminando");
-      console.log(usuario);
 
       if (usuario.rol == "profesor") {
         //Filtraremos el curso seleccionado.
@@ -795,19 +941,26 @@ const plantillaBotonEliminar = (usuario) => {
           //Recorreremos a este curso y sacaremos la id de ese documento del curso.
           const cursoFiltrado = await getDocs(consulta);
           cursoFiltrado.docs.map(async (documento) => {
-            console.log(documento.data());
             const cursoDocId = documento.id;
             //Para luego con la id del documento y la colección de cursos, actualizar las profesores del curso seleccionado.
             await updateDoc(doc(collection(db, "cursos"), cursoDocId), {
               profesores: arrayRemove(usuario.nombre),
-            }).then(() => {
-              //Dividiremos la cadena para obtener los datos que necesitamos, el primero será la id, el segundo el nombre del curso.
-              location.href =
-                "../curso.html?id=" +
-                params.get("id").split("?")[0] +
-                "?curso=" +
-                params.get("id").split("=")[1];
-            });
+            })
+              .then(() => {
+                alert(
+                  "Enhorabuena, has eliminado el alumno correctamente!",
+                  "success"
+                );
+              })
+              .then(() => {
+                setTimeout(() => {
+                  location.href =
+                    "../curso.html?id=" +
+                    params.get("id").split("?")[0] +
+                    "?curso=" +
+                    params.get("id").split("=")[1];
+                }, 2000);
+              });
           });
         });
       } else {
@@ -822,14 +975,22 @@ const plantillaBotonEliminar = (usuario) => {
           //Para luego con la id del documento y la colección de cursos, actualizar las alumnos del curso seleccionado.
           await updateDoc(doc(collection(db, "cursos"), cursoDocId), {
             alumnos: arrayRemove(usuario.nombre),
-          }).then(() => {
-            //Dividiremos la cadena para obtener los datos que necesitamos, el primero será la id, el segundo el nombre del curso.
-            location.href =
-              "../curso.html?id=" +
-              params.get("id").split("?")[0] +
-              "?curso=" +
-              params.get("id").split("=")[1];
-          });
+          })
+            .then(() => {
+              alert(
+                "Enhorabuena, has eliminado el alumno correctamente!",
+                "success"
+              );
+            })
+            .then(() => {
+              setTimeout(() => {
+                location.href =
+                  "../curso.html?id=" +
+                  params.get("id").split("?")[0] +
+                  "?curso=" +
+                  params.get("id").split("=")[1];
+              }, 2000);
+            });
         });
       }
     },
@@ -838,65 +999,37 @@ const plantillaBotonEliminar = (usuario) => {
   return buttonEliminar;
 };
 
+//Creación de plantilla para crear el botón editar.
 const plantillaBotonEditar = (usuario) => {
   let buttonEditar = d.createElement("button");
   buttonEditar.classList.add("btn", "btn-primary");
-  buttonEditar.innerHTML = "<a href='#formularioEditar'>Editar</a>";
+  buttonEditar.innerHTML = "<a href='#editarFormulario'>Editar</a>";
   buttonEditar.addEventListener(
     "click",
-    (ev) => {
+    () => {
       console.log("editando");
-      //Obtengo este dato de forma relativa, en este caso el correo, para rellenar la plantilla.
-      //Nos aseguramos que pulsa el enlace para obtener el dato que queremos.
-      if (ev.target.tagName == "A") {
-        d.getElementById("mostrarCurso").appendChild(
-          plantillaFormularioEditar(usuario)
-        );
-        console.log(usuario);
-      }
+      d.getElementById("nombreAlumnoCurso").value =
+        usuario.nombre.split(" ")[0];
+      d.getElementById("primerApellido").value = usuario.nombre.split(" ")[1];
+      d.getElementById("segundoApellido").value = usuario.nombre.split(" ")[2];
+      d.getElementById("correoAlumnoCurso").value = usuario.correo;
+      d.getElementById("editarFormulario").classList.toggle("aparecer");
+
+      d.getElementById("actualizarEditar").addEventListener(
+        "click",
+        (ev) => {
+          ev.preventDefault();
+          actualizarUsuario(usuario);
+        },
+        false
+      );
     },
     false
   );
   return buttonEditar;
 };
 
-export const plantillaFormularioEditar = (usuario) => {
-  const divForm = d.createElement("div");
-  divForm.id = "formularioEditar";
-  divForm.innerHTML = `<form>
-  <div class="mb-3">
-    <label for="nombreAlumnoCurso" class="form-label">Nombre</label>
-    <input type="text" class="form-control" id="nombreAlumnoCurso" value=${
-      usuario.nombre.split(" ")[0]
-    } />
-  </div>
-  <div class="mb-3">
-    <label for="primerApellido" class="form-label"
-      >Apellidos</label
-    >
-    <input type="text" class="form-control" id="primerApellido" value=${
-      usuario.nombre.split(" ")[1]
-    }/>
-  </div>
-  <div class="mb-3">
-    <label for="segundoApellido" class="form-label"
-      >Apellidos</label
-    >
-    <input type="text" class="form-control" id="segundoApellido" value=${
-      usuario.nombre.split(" ")[2]
-    }/>
-  </div>
-  <div class="mb-3">
-    <label for="correoAlumnoCurso" class="form-label">Correo</label>
-    <input type="email" class="form-control" id="correoAlumnoCurso" value=${
-      usuario.correo
-    }/>
-  </div>
-  <button class="btn btn-primary">Actualizar</button>
-</form>`;
-  return divForm;
-};
-
+//Creación de plantilla para mostrar el perfil del usuario en perfil.
 export const plantillaPerfilNueva = (usuario) => {
   const divPerfil = d.createElement("div");
   divPerfil.classList.add("cardPrincipal");
@@ -930,10 +1063,23 @@ export const plantillaPerfilNueva = (usuario) => {
   return divPerfil;
 };
 
+//En el caso de que el profesor o el alumno no tenga la propiedad imagen con un enlace, se rellenará con esta por defecto.
 const imagenVacia = (usuario) => {
-  console.log(usuario);
   if (usuario.imagen == "") {
     usuario.imagen =
       "https://i.pinimg.com/280x280_RS/2e/45/66/2e4566fd829bcf9eb11ccdb5f252b02f.jpg";
   }
+};
+
+//Función que utilizaremos para mostrar mensajes por pantalla.
+export const alert = (message, type) => {
+  var wrapper = document.createElement("div");
+  wrapper.innerHTML =
+    '<div class="alert alert-' +
+    type +
+    ' alert-dismissible" role="alert">' +
+    message +
+    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+
+  document.getElementById("contenedorAlerta").appendChild(wrapper);
 };

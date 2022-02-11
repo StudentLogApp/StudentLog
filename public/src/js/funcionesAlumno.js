@@ -40,13 +40,6 @@ export const cargarAlumno = async(id) => {
   })
 }
 
-export const mostrarAlumnos = async() => {
-  const alumnos = await getDocs(alumnosColeccion);
-  alumnos.forEach((doc) => {
-    //console.log(doc.data());
-  })
-}
-
 const crearPlantillasAlumno = (alumno) => {
   const divPerfil = plantillaPerfil(alumno);
   d.getElementById("plantillas").appendChild(divPerfil);

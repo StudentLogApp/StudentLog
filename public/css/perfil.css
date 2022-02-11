@@ -1,0 +1,54 @@
+body {
+  background-color: #f6f7ff;
+}
+
+.primary{
+  width: 200px;
+  height: 600px;
+  background-color: white;
+  margin: 32px auto;
+  border-radius: 12px;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+  -webkit-box-shadow: 10px 10px 18px 5px rgba(0, 0, 0, 0.082);
+  -moz-box-shadow: 10px 10px 18px 5px rgba(0, 0, 0, 0.082);
+  box-shadow: 10px 10px 18px 5px rgba(0, 0, 0, 0.082);
+}
+
+.card a {
+  width: 100%;
+  height: auto;
+  padding: 8px 32px;
+  font-size: 1.1em;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  letter-spacing: 1px;
+  bottom: 0;
+}
+
+.img-content{
+  background: url(../assets/img/StudentLogFondo.png) no-repeat center center
+  fixed;
+background-size: cover;
+background-size: 100% 100%;
+height: 150px;
+margin-bottom: 3rem;
+}
+
+.grid img{
+  margin-top: 4.5rem;
+  display: inline-block;
+  position: relative;
+  width: 130px;
+  height: 130px;
+  overflow: hidden;
+  border-radius: 50%;
+}

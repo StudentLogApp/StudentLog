@@ -10,6 +10,11 @@ nav {
   text-align: center;
 }
 
+.datosPerfil {
+  font-style: italic;
+  font-size: 17px;
+}
+
 .cardPrincipal {
   margin: 1rem;
   -webkit-box-shadow: 10px 10px 18px 5px rgba(0, 0, 0, 0.082);
@@ -76,6 +81,10 @@ form {
   text-align: center;
 }
 
+.card-body {
+  background-color: #f9fafd;
+}
+
 form div {
   width: 100%;
   display: flex;
@@ -107,11 +116,19 @@ form div {
   bottom: 0;
 }
 
-#checkboxes input, #checkboxesAlumno input, #checkboxesAlumno2 input, #checkboxesAsignatura input {
+#checkboxes input,
+#checkboxesAlumno input,
+#checkboxesAlumno2 input,
+#checkboxesAsignatura input,
+#checkboxesProfesor input {
   margin-right: 1rem;
 }
 
-#checkboxes, #checkboxesAlumno, #checkboxesAlumno2, #checkboxesAsignatura {
+#checkboxes,
+#checkboxesAlumno,
+#checkboxesAlumno2,
+#checkboxesAsignatura,
+#checkboxesProfesor {
   display: block;
   border: 1px #dadada solid;
   position: relative;
@@ -123,15 +140,27 @@ form div {
   max-height: 110px;
 }
 
-#checkboxes.hide, #checkboxesAlumno.hide, #checkboxesAlumno2.hide, #checkboxesAsignatura.hide {
+#checkboxes.hide,
+#checkboxesAlumno.hide,
+#checkboxesAlumno2.hide,
+#checkboxesAsignatura.hide,
+#checkboxesProfesor.hide {
   display: none;
 }
 
-#checkboxes label, #checkboxesAlumno label, #checkboxesAlumno2 label, #checkboxesAsignatura label {
+#checkboxes label,
+#checkboxesAlumno label,
+#checkboxesAlumno2 label,
+#checkboxesAsignatura label,
+#checkboxesProfesor label {
   display: block;
 }
 
-#checkboxes label:hover, #checkboxesAlumno label:hover, #checkboxesAlumno2 label:hover, #checkboxesAsignatura label:hover {
+#checkboxes label:hover,
+#checkboxesAlumno label:hover,
+#checkboxesAlumno2 label:hover,
+#checkboxesAsignatura label:hover,
+#checkboxesProfesor label:hover {
   background-color: #1e90ff;
 }
 
@@ -144,6 +173,7 @@ form div {
 .cardPrincipal {
   margin: 5rem;
   margin-top: 7rem;
+  background-color: white;
 }
 
 /*Medium devices (tablets, 768px and up)*/

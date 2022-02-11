@@ -52,7 +52,7 @@ export const cerrarSesion = () => {
     .signOut()
     .then(() => {
       console.log("Se ha cerrado la conexión correctamente.");
-      location.reload();
+      location.href = '/';
     })
     .catch((error) => {
       console.log(error);

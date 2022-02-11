@@ -7,9 +7,11 @@ import {
   getFirestore,
   collection,
   getDocs,
-  addDoc,
+  arrayRemove,
   query,
   where,
+  updateDoc,
+  doc,
 } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 import { showCheckboxes } from "./funcionesProfesor.js";
@@ -77,6 +79,11 @@ export const plantillaCrearCurso = () => {
         <div class="col-md-3" id="cargarAlumnosCurso">
           <label for="cursoAlumno" class="form-label"
             >Selecciona alumno</label
+          >
+        </div>
+        <div class="col-md-3" id="cargarProfesoresCurso">
+          <label for="cursoProfesor" class="form-label"
+            >Selecciona profesor</label
           >
         </div>
         <div class="col-12">
@@ -154,6 +161,17 @@ export const plantillaCrearAsignatura = () => {
             >Selecciona curso</label
           >
         </div>
+        <div class="col-md-4">
+        <label for="asignaturaHoras" class="form-label"
+          >Nº de horas de la asignatura</label
+        >
+        <input
+          type="number"
+          class="form-control"
+          id="asignaturaHoras"
+          required
+        />
+      </div>
         <div class="col-12">
           <button class="btn btn-primary" type="submit" id="botonCrearAsignatura">Crear</button>
         </div>
@@ -168,7 +186,7 @@ export const plantillaMatricularAlumno = () => {
   const divAlumno = d.createElement("div");
   divAlumno.classList.add("cardPrincipal");
   divAlumno.style = "width: 20rem";
-  divAlumno.innerHTML = `        <div class="headCard" style="width: 20rem">
+  divAlumno.innerHTML = `<div class="headCard" style="width: 20rem">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="28"
@@ -246,7 +264,7 @@ export const plantillaMatricularAlumno = () => {
             >
           </div>
           <div class="col-md-3" id="cargarCursosMatricula2">
-            <label for="matriculaAsignaturaAsignatura" class="form-label"
+            <label for="matriculaCursoAsignatura" class="form-label"
               >Selecciona curso</label
             >
           </div>
@@ -318,11 +336,18 @@ export const plantillaNavCurso = (profesor) => {
   profesor.curso.forEach((element) => {
     const curso = d.createElement("li");
     curso.innerHTML = `<a class="dropdown-item" href="#">${element}</a>`;
+    curso.addEventListener(
+      "click",
+      (ev) => {
+        location.href =
+          "./curso.html?id=" + profesor.id + "?curso=" + ev.target.textContent;
+      },
+      false
+    );
     listaCurso.appendChild(curso);
   });
 
   navCurso.appendChild(listaCurso);
-
   return navCurso;
 };
 
@@ -331,7 +356,7 @@ export const crearFormulariosDinamico = async (profesor) => {
   const selectCurso = plantillaSelect("asignaturaCurso");
 
   //Cargados cursos para la matriculación de alumnos en curso.
-  const selectCurso2 = plantillaSelect("matriculaAsignaturaAsignatura");
+  const selectCurso2 = plantillaSelect("matriculaCursoAsignatura");
 
   //Cargados cursos para la matriculación de alumnos en asignatura.
   const selectCurso3 = plantillaSelect("matriculaCurso");
@@ -389,12 +414,12 @@ export const crearFormulariosDinamico = async (profesor) => {
   divCheckbox2.classList.add("hide");
 
   alumnos.forEach((element) => {
-    const labelCheckbox2 = d.createElement("label");
-    labelCheckbox2.classList.add("form-check-label");
-    labelCheckbox2.innerHTML = `<input class="form-check-input" type="checkbox"/>${
+    const labelCheckbox = d.createElement("label");
+    labelCheckbox.classList.add("form-check-label");
+    labelCheckbox.innerHTML = `<input class="form-check-input" type="checkbox"/>${
       element.data().nombre
     }`;
-    divCheckbox2.appendChild(labelCheckbox2);
+    divCheckbox2.appendChild(labelCheckbox);
   });
 
   multiSelect2.appendChild(divCheckbox2);
@@ -410,16 +435,38 @@ export const crearFormulariosDinamico = async (profesor) => {
   const asignaturas = await getDocs(collection(db, "asignaturas"));
 
   asignaturas.forEach((element) => {
-    const labelCheckbox3 = d.createElement("label");
-    labelCheckbox3.classList.add("form-check-label");
-    labelCheckbox3.innerHTML = `<input class="form-check-input" type="checkbox"/>${
+    const labelCheckbox = d.createElement("label");
+    labelCheckbox.classList.add("form-check-label");
+    labelCheckbox.innerHTML = `<input class="form-check-input" type="checkbox"/>${
       element.data().nombre
     }`;
-    divCheckbox3.appendChild(labelCheckbox3);
+    divCheckbox3.appendChild(labelCheckbox);
   });
 
   multiSelect3.appendChild(divCheckbox3);
   d.getElementById("cargarAsignaturasCurso").appendChild(multiSelect3);
+
+  //Cargados profesores para la creación del curso.
+  const multiSelect5 = multiselectCursoProfesor();
+
+  const divCheckbox5 = d.createElement("div");
+  divCheckbox5.id = "checkboxesProfesor";
+  divCheckbox5.classList.add("hide");
+
+  const profesores = await getDocs(collection(db, "profesores"));
+
+  profesores.forEach((element) => {
+    const labelCheckbox = d.createElement("label");
+    labelCheckbox.classList.add("form-check-label");
+    labelCheckbox.innerHTML = `<input class="form-check-input" type="checkbox"/>${
+      element.data().nombre
+    }`;
+    divCheckbox5.appendChild(labelCheckbox);
+  });
+
+  multiSelect5.appendChild(divCheckbox5);
+
+  d.getElementById("cargarProfesoresCurso").appendChild(multiSelect5);
 
   //Cargados alumnos para la matriculación de alumnos en curso.
   const selectAlumno = plantillaSelect("matriculaAlumnoAsignatura");
@@ -449,7 +496,7 @@ export const crearFormulariosDinamico = async (profesor) => {
   divCheckbox4.classList.add("hide");
 
   //Cargadas asignaturas dependiendo del curso seleccionado para la matriculación de alumnos en asignatura.
-  d.getElementById("matriculaAsignaturaAsignatura").addEventListener(
+  d.getElementById("matriculaCursoAsignatura").addEventListener(
     "change",
     async () => {
       //Limpiaremos el div de los checkbox para que no se acumulen asignaturas repetidas.
@@ -457,9 +504,7 @@ export const crearFormulariosDinamico = async (profesor) => {
         d.getElementById("checkboxesAsignatura").innerHTML = "";
       }
 
-      const inputCurso = d.getElementById(
-        "matriculaAsignaturaAsignatura"
-      ).value;
+      const inputCurso = d.getElementById("matriculaCursoAsignatura").value;
 
       //Filtraremos el alumno que tenga la id de autentificación.
       const consulta = query(
@@ -469,7 +514,6 @@ export const crearFormulariosDinamico = async (profesor) => {
       const cursoSeleccionado = await getDocs(consulta);
       cursoSeleccionado.docs.map((documento) => {
         const curso = documento.data();
-        console.log(curso);
         curso.asignaturas.forEach((element) => {
           const asignatura = d.createElement("label");
           asignatura.classList.add("form-check-label");
@@ -512,7 +556,7 @@ const multiselectAlumnoAsignatura = () => {
     id="asignaturaAlumno"
     required
   >
-    <option selected disabled value="">Elige</option>
+    <option selected disabled value="0">Elige</option>
   </select>
   <div class="overSelect"></div>
 </div>`;
@@ -529,7 +573,7 @@ const multiselectAlumnoCurso = () => {
     id="cursoAlumno"
     required
   >
-    <option selected disabled value="">Elige</option>
+    <option selected disabled value="0">Elige</option>
   </select>
   <div class="overSelect"></div>
 </div>`;
@@ -546,7 +590,7 @@ const multiselectAsignaturaCurso = () => {
     id="cursoAsignatura"
     required
   >
-    <option selected disabled value="">Elige</option>
+    <option selected disabled value="0">Elige</option>
   </select>
   <div class="overSelect"></div>
 </div>`;
@@ -563,10 +607,333 @@ const multiselectMatriculaAsignatura = () => {
     id="matriculaAsignatura"
     required
   >
-    <option selected disabled value="">Elige</option>
+    <option selected disabled value="0">Elige</option>
     <option selected value="">Elige</option>
   </select>
   <div class="overSelect"></div>
 </div>`;
   return divMultiselect;
+};
+
+const multiselectCursoProfesor = () => {
+  const divMultiselect = d.createElement("div");
+  divMultiselect.classList.add("multiselect");
+  divMultiselect.innerHTML = `<div class="selectBox" id="eventoSelectProfesor">
+  <select
+    class="form-select"
+    aria-label="Elige"
+    id="cursoProfesor"
+    required
+  >
+    <option selected disabled value="0">Elige</option>
+    <option selected value="">Elige</option>
+  </select>
+  <div class="overSelect"></div>
+</div>`;
+  return divMultiselect;
+};
+
+export const plantillaTituloCurso = (nombre) => {
+  const divTitulo = d.createElement("div");
+  divTitulo.classList.add("two", "alt-two");
+  divTitulo.innerHTML = `<h1>
+  ${nombre}
+  <span>Alumnos</span>
+</h1>`;
+
+  return divTitulo;
+};
+
+export const divElemento = (elemento) => {
+  const div = d.createElement("div");
+  div.classList.add("two", "alt-two");
+  div.innerHTML = `<h1><span>${elemento}</span></h1>`;
+  return div;
+};
+
+export const plantillaTablaCurso = (elemento) => {
+  const tabla = d.createElement("table");
+  tabla.classList.add("table", "table-hover");
+  tabla.innerHTML = `<thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Nombre</th>
+    <th scope="col">Apellidos</th>
+    <th scope="col">Correo</th>
+    <th scope="col">Asignaturas</th>
+    <th scope="col">Herramientas</th>
+  </tr>
+</thead>
+<tbody id="${elemento}">
+</tbody>`;
+  return tabla;
+};
+
+export const plantillaTablaAsignaturasCurso = () => {
+  const tabla = d.createElement("table");
+  tabla.classList.add("table", "table-hover");
+  tabla.innerHTML = `<thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Nombre</th>
+    <th scope="col">Horas</th>
+  </tr>
+</thead>
+<tbody id="mostrarAsignaturas">
+</tbody>`;
+  return tabla;
+};
+
+export const plantillaAlumnosCurso = (curso) => {
+  //Numerado de filas dinámico.
+  let num = 1;
+  curso.alumnos.forEach(async (element) => {
+    //Filtraremos el alumno para obtener los correos y poder incluirlos en la web.
+    const consulta = query(
+      collection(db, "alumnos"),
+      where("nombre", "==", element)
+    );
+    const usuarioFiltrado = await getDocs(consulta);
+
+    usuarioFiltrado.docs.map((documento) => {
+      const usuario = documento.data();
+      const tr = d.createElement("tr");
+      tr.innerHTML = `<th scope="row">${num}</th>
+      <td>${element.split(" ")[0]}</td>
+      <td>${element.split(" ")[1] + " " + element.split(" ")[2]}</td>
+      <td>${usuario.correo}</td>
+      <td>${usuario.asignaturas}</td>`;
+
+      const td = d.createElement("td");
+      let buttonEditar = plantillaBotonEditar(usuario);
+      let buttonEliminar = plantillaBotonEliminar(usuario);
+      td.appendChild(buttonEditar);
+      td.appendChild(buttonEliminar);
+      tr.appendChild(td);
+      d.getElementById("mostrarAlumnos").appendChild(tr);
+      num++;
+    });
+  });
+};
+
+export const plantillaProfesoresCurso = (curso) => {
+  //Numerado de filas dinámico.
+  let num = 1;
+  curso.profesores.forEach(async (element) => {
+    //Filtraremos el alumno para obtener los correos y poder incluirlos en la web.
+    const consulta = query(
+      collection(db, "profesores"),
+      where("nombre", "==", element)
+    );
+    const usuarioFiltrado = await getDocs(consulta);
+
+    usuarioFiltrado.docs.map((documento) => {
+      const usuario = documento.data();
+      const tr = d.createElement("tr");
+      tr.innerHTML = `<th scope="row">${num}</th>
+      <td>${element.split(" ")[0]}</td>
+      <td>${element.split(" ")[1] + " " + element.split(" ")[2]}</td>
+      <td>${usuario.correo}</td>
+      <td>${usuario.asignaturas}</td>`;
+
+      const td = d.createElement("td");
+      let buttonEditar = plantillaBotonEditar(usuario);
+      let buttonEliminar = plantillaBotonEliminar(usuario);
+      td.appendChild(buttonEditar);
+      td.appendChild(buttonEliminar);
+      tr.appendChild(td);
+      d.getElementById("mostrarProfesores").appendChild(tr);
+      num++;
+    });
+  });
+};
+
+export const plantillaAsignaturasCurso = (curso) => {
+  console.log(curso);
+  //Numerado de filas dinámico.
+  let num = 1;
+  curso.asignaturas.forEach(async (element) => {
+    //Filtraremos el alumno para obtener los correos y poder incluirlos en la web.
+    const consulta = query(
+      collection(db, "asignaturas"),
+      where("nombre", "==", element)
+    );
+    const asignaturaFiltrada = await getDocs(consulta);
+
+    asignaturaFiltrada.docs.map((documento) => {
+      const asignatura = documento.data();
+      const tr = d.createElement("tr");
+      tr.innerHTML = `<th scope="row">${num}</th>
+      <td>${asignatura.nombre}</td>
+      <td>${asignatura.horas}</td>`;
+      d.getElementById("mostrarAsignaturas").appendChild(tr);
+      num++;
+    });
+  });
+};
+
+const plantillaBotonEliminar = (usuario) => {
+  //Obtenemos la id recibida en la url mediante estos pasos.
+  let params = new URLSearchParams(location.search);
+
+  let buttonEliminar = d.createElement("button");
+  buttonEliminar.classList.add("btn", "btn-danger");
+  buttonEliminar.innerHTML = "Eliminar";
+  buttonEliminar.addEventListener(
+    "click",
+    async () => {
+      console.log("eliminando");
+      console.log(usuario);
+
+      if (usuario.rol == "profesor") {
+        //Filtraremos el curso seleccionado.
+        usuario.curso.forEach(async (element) => {
+          const consulta = query(
+            collection(db, "cursos"),
+            where("nombre", "==", element)
+          );
+          //Recorreremos a este curso y sacaremos la id de ese documento del curso.
+          const cursoFiltrado = await getDocs(consulta);
+          cursoFiltrado.docs.map(async (documento) => {
+            console.log(documento.data());
+            const cursoDocId = documento.id;
+            //Para luego con la id del documento y la colección de cursos, actualizar las profesores del curso seleccionado.
+            await updateDoc(doc(collection(db, "cursos"), cursoDocId), {
+              profesores: arrayRemove(usuario.nombre),
+            }).then(() => {
+              //Dividiremos la cadena para obtener los datos que necesitamos, el primero será la id, el segundo el nombre del curso.
+              location.href =
+                "../curso.html?id=" +
+                params.get("id").split("?")[0] +
+                "?curso=" +
+                params.get("id").split("=")[1];
+            });
+          });
+        });
+      } else {
+        const consulta = query(
+          collection(db, "cursos"),
+          where("nombre", "==", usuario.curso)
+        );
+        //Recorreremos a este curso y sacaremos la id de ese documento del curso.
+        const cursoFiltrado = await getDocs(consulta);
+        cursoFiltrado.docs.map(async (documento) => {
+          const cursoDocId = documento.id;
+          //Para luego con la id del documento y la colección de cursos, actualizar las alumnos del curso seleccionado.
+          await updateDoc(doc(collection(db, "cursos"), cursoDocId), {
+            alumnos: arrayRemove(usuario.nombre),
+          }).then(() => {
+            //Dividiremos la cadena para obtener los datos que necesitamos, el primero será la id, el segundo el nombre del curso.
+            location.href =
+              "../curso.html?id=" +
+              params.get("id").split("?")[0] +
+              "?curso=" +
+              params.get("id").split("=")[1];
+          });
+        });
+      }
+    },
+    false
+  );
+  return buttonEliminar;
+};
+
+const plantillaBotonEditar = (usuario) => {
+  let buttonEditar = d.createElement("button");
+  buttonEditar.classList.add("btn", "btn-primary");
+  buttonEditar.innerHTML = "<a href='#formularioEditar'>Editar</a>";
+  buttonEditar.addEventListener(
+    "click",
+    (ev) => {
+      console.log("editando");
+      //Obtengo este dato de forma relativa, en este caso el correo, para rellenar la plantilla.
+      //Nos aseguramos que pulsa el enlace para obtener el dato que queremos.
+      if (ev.target.tagName == "A") {
+        d.getElementById("mostrarCurso").appendChild(
+          plantillaFormularioEditar(usuario)
+        );
+        console.log(usuario);
+      }
+    },
+    false
+  );
+  return buttonEditar;
+};
+
+export const plantillaFormularioEditar = (usuario) => {
+  const divForm = d.createElement("div");
+  divForm.id = "formularioEditar";
+  divForm.innerHTML = `<form>
+  <div class="mb-3">
+    <label for="nombreAlumnoCurso" class="form-label">Nombre</label>
+    <input type="text" class="form-control" id="nombreAlumnoCurso" value=${
+      usuario.nombre.split(" ")[0]
+    } />
+  </div>
+  <div class="mb-3">
+    <label for="primerApellido" class="form-label"
+      >Apellidos</label
+    >
+    <input type="text" class="form-control" id="primerApellido" value=${
+      usuario.nombre.split(" ")[1]
+    }/>
+  </div>
+  <div class="mb-3">
+    <label for="segundoApellido" class="form-label"
+      >Apellidos</label
+    >
+    <input type="text" class="form-control" id="segundoApellido" value=${
+      usuario.nombre.split(" ")[2]
+    }/>
+  </div>
+  <div class="mb-3">
+    <label for="correoAlumnoCurso" class="form-label">Correo</label>
+    <input type="email" class="form-control" id="correoAlumnoCurso" value=${
+      usuario.correo
+    }/>
+  </div>
+  <button class="btn btn-primary">Actualizar</button>
+</form>`;
+  return divForm;
+};
+
+export const plantillaPerfilNueva = (usuario) => {
+  const divPerfil = d.createElement("div");
+  divPerfil.classList.add("cardPrincipal");
+  divPerfil.style = "width: 20rem";
+  imagenVacia(usuario);
+  divPerfil.innerHTML = `<div class="primary card" style="width: 18rem">
+    <div class="img-content">
+      <img src="${usuario.imagen}" class="card-img-top"/>
+    </div>
+    <div class="card-body">
+      <h5 class="card-nombre">${usuario.nombre}</h5>
+      <br>
+      <p class="card-correo">
+      ${usuario.correo}
+      </p>
+      <br>
+      <p class="card-rol">
+      ${usuario.rol}
+      </p>
+      <a class="btn btn-info" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"">Añadir imagen</a>
+      <div class="collapse" id="collapseExample">
+        <div class="card card-body secundary">
+          <input id="inputImagen" type="text" placeholder="Introduce el enlace de la imagen." />
+          <button type="button" id="enviarImagen" class="btn btn-primary btn-sm">Enviar</button>
+        </div>
+      </div>
+      <br><br>
+      <a href="#" id="cerrarSesionPerfil" class="btn btn-primary">Cerrar Sesión</a>
+    </div>
+  </div>`;
+  return divPerfil;
+};
+
+const imagenVacia = (usuario) => {
+  console.log(usuario);
+  if (usuario.imagen == "") {
+    usuario.imagen =
+      "https://i.pinimg.com/280x280_RS/2e/45/66/2e4566fd829bcf9eb11ccdb5f252b02f.jpg";
+  }
 };
